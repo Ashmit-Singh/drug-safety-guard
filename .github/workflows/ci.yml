@@ -1,0 +1,85 @@
+name: CI Pipeline
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main]
+
+jobs:
+  backend-lint-test:
+    name: Backend Lint & Test
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7
+        ports: ['6379:6379']
+        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: backend
+
+      - name: Lint
+        run: npm run lint
+        working-directory: backend
+
+      - name: Unit Tests
+        run: npm test -- --coverage --forceExit
+        working-directory: backend
+        env:
+          NODE_ENV: test
+          SUPABASE_URL: https://test.supabase.co
+          SUPABASE_ANON_KEY: test-anon-key-placeholder
+          SUPABASE_SERVICE_KEY: test-service-key-placeholder
+          JWT_SECRET: test-jwt-secret-at-least-32-chars-long!!
+          REDIS_URL: redis://localhost:6379
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: backend/coverage/
+
+  flutter-analyze-test:
+    name: Flutter Analyze & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.x'
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: flutter_app
+
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+        working-directory: flutter_app
+
+      - name: Analyze
+        run: flutter analyze
+        working-directory: flutter_app
+
+      - name: Test
+        run: flutter test --coverage
+        working-directory: flutter_app
+
+  sql-lint:
+    name: SQL Migration Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check migrations exist
+        run: |
+          ls -la database/migrations/
+          echo "Found $(ls database/migrations/*.sql | wc -l) migration files"
