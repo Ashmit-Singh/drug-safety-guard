@@ -139,7 +139,7 @@ final testDrugs = [
 ];
 
 void main() {
-  group('DrugSearchScreen', () => {
+  group('DrugSearchScreen', () {
     testWidgets('renders search field and empty state', (tester) async {
       await tester.pumpWidget(createTestWidget(
         const TestDrugSearchScreen(),
