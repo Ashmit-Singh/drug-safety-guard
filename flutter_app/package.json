@@ -1,0 +1,8 @@
+{
+  "name": "drug-safety-guard",
+  "version": "1.0.0",
+  "scripts": {
+    "install": "echo 'Custom install step handled in build script'",
+    "build": "bash vercel_build.sh"
+  }
+}
