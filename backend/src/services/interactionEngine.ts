@@ -8,6 +8,7 @@
 import { supabase } from '../middleware/auth';
 import { getCachedInteraction, setCachedInteraction, batchGetCachedInteractions } from './redisService';
 import { logger } from '../middleware/logger';
+// @ts-ignore -- opossum has no bundled types, install @types/opossum if available
 import CircuitBreaker from 'opossum';
 import {
     InteractionAlert,
@@ -36,9 +37,13 @@ interface DrugNameRow {
 }
 
 // Circuit breaker configuration
+type CacheResult = IngredientInteraction | { none: true };
+type CacheMap = Map<string, CacheResult>;
+
 const redisBatchGetWithBreaker = new CircuitBreaker(
-    async (pairs: [string, string][]): Promise<Map<string, IngredientInteraction | { none: true }>> => {
-        return batchGetCachedInteractions(pairs);
+    async (pairs: [string, string][]): Promise<CacheMap> => {
+        const result = await batchGetCachedInteractions(pairs);
+        return result as unknown as CacheMap;
     },
     {
         timeout: 500,
@@ -48,7 +53,7 @@ const redisBatchGetWithBreaker = new CircuitBreaker(
     }
 );
 
-redisBatchGetWithBreaker.fallback((): Map<string, never> => {
+redisBatchGetWithBreaker.fallback((): CacheMap => {
     logger.warn('Redis circuit breaker OPEN — falling back to direct DB queries');
     return new Map();
 });
@@ -77,7 +82,7 @@ export async function detectInteractions(drugIds: string[]): Promise<Interaction
 
     // Step 2: Build maps
     const ingredientMap: Record<string, { ingredientId: string; ingredientName: string }[]> = {};
-    for (const di of (drugIngredients as DrugIngredientRow[]) || []) {
+    for (const di of ((drugIngredients || []) as unknown as DrugIngredientRow[])) {
         if (!ingredientMap[di.drug_id]) ingredientMap[di.drug_id] = [];
         ingredientMap[di.drug_id].push({
             ingredientId: di.ingredient_id,
@@ -96,9 +101,10 @@ export async function detectInteractions(drugIds: string[]): Promise<Interaction
         drugNameMap[drug.id] = { brandName: drug.brand_name, genericName: drug.generic_name };
     }
 
-    // Step 3: Collect ingredient pairs
+    // Step 3: Collect ingredient pairs (deduplicated)
     const uniqueDrugIds = [...new Set(drugIds)];
     const pairsToCheck: IngredientPairCheck[] = [];
+    const seenPairs = new Set<string>();
 
     for (let i = 0; i < uniqueDrugIds.length; i++) {
         for (let j = i + 1; j < uniqueDrugIds.length; j++) {
@@ -113,6 +119,9 @@ export async function detectInteractions(drugIds: string[]): Promise<Interaction
                     const [firstId, secondId] = ingA.ingredientId < ingB.ingredientId
                         ? [ingA.ingredientId, ingB.ingredientId]
                         : [ingB.ingredientId, ingA.ingredientId];
+                    const pairKey = `${firstId}:${secondId}`;
+                    if (seenPairs.has(pairKey)) continue;
+                    seenPairs.add(pairKey);
                     const [firstName, secondName] = ingA.ingredientId < ingB.ingredientId
                         ? [ingA.ingredientName, ingB.ingredientName]
                         : [ingB.ingredientName, ingA.ingredientName];
@@ -127,7 +136,7 @@ export async function detectInteractions(drugIds: string[]): Promise<Interaction
     // Step 4: Batch Redis lookup
     const cachedResults = await redisBatchGetWithBreaker.fire(
         pairsToCheck.map((p) => [p.firstId, p.secondId] as [string, string])
-    ) as Map<string, IngredientInteraction | { none: true }>;
+    ) as CacheMap;
 
     // Step 5: Fetch cache misses from DB
     const cacheMisses = pairsToCheck.filter((p) => {

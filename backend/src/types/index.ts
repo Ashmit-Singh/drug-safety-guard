@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 // ─── Database Models ─────────────────────────────────
 
 export type SeverityLevel = 'mild' | 'moderate' | 'severe' | 'contraindicated';
-export type PrescriptionStatus = 'draft' | 'active' | 'completed' | 'cancelled';
+export type PrescriptionStatus = 'draft' | 'pending_review' | 'approved' | 'dispensed' | 'cancelled';
 export type AlertStatus = 'active' | 'acknowledged' | 'overridden' | 'resolved';
 export type UserRole = 'patient' | 'doctor' | 'pharmacist' | 'admin';
 

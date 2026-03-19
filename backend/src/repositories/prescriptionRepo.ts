@@ -14,7 +14,7 @@ import {
 
 const PRESCRIPTION_COLUMNS = `
     id, patient_id, doctor_id, diagnosis, notes, status,
-    prescribed_at, valid_until, created_at, updated_at
+    prescribed_at, valid_until, created_at, updated_at, deleted_at
 `;
 
 const PRESCRIPTION_FULL = `
@@ -50,7 +50,7 @@ export async function create(input: CreatePrescriptionInput): Promise<Prescripti
         .single();
 
     if (error) throw error;
-    return data as Prescription;
+    return data as unknown as Prescription;
 }
 
 export async function findById(id: string): Promise<Prescription | null> {
@@ -62,7 +62,7 @@ export async function findById(id: string): Promise<Prescription | null> {
         .single();
 
     if (error) return null;
-    return data as Prescription;
+    return data as unknown as Prescription;
 }
 
 export async function findByPatientId(
@@ -144,7 +144,7 @@ export async function getAlerts(prescriptionId: string): Promise<Alert[]> {
         .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return (data || []) as Alert[];
+    return (data || []) as unknown as Alert[];
 }
 
 export async function insertEvent(

@@ -15,7 +15,7 @@ export async function create(req: AuthenticatedRequest, res: Response, next: Nex
             drugs: `/api/v1/prescriptions/${data.id}/drugs`,
             safetyCheck: `/api/v1/prescriptions/${data.id}/safety-check`,
         };
-        sendSuccess(res, data, { statusCode: 201, links });
+        sendSuccess(res, data, { statusCode: 201, links } as any);
     } catch (err) {
         next(err);
     }
@@ -30,7 +30,7 @@ export async function getById(req: AuthenticatedRequest, res: Response, next: Ne
             alerts: `/api/v1/prescriptions/${data.id}/alerts`,
             safetyCheck: `/api/v1/prescriptions/${data.id}/safety-check`,
         };
-        sendSuccess(res, data, { links });
+        sendSuccess(res, data, { links } as any);
     } catch (err) {
         next(err);
     }
@@ -43,7 +43,7 @@ export async function addDrug(req: AuthenticatedRequest, res: Response, next: Ne
             prescription: `/api/v1/prescriptions/${req.params.id}`,
             safetyCheck: `/api/v1/prescriptions/${req.params.id}/safety-check`,
         };
-        sendSuccess(res, data, { statusCode: 201, links });
+        sendSuccess(res, data, { statusCode: 201, links } as any);
     } catch (err) {
         next(err);
     }

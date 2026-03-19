@@ -4,19 +4,19 @@
  */
 
 // Mock dependencies before requiring module
-jest.mock('../src/middleware/auth', () => ({
+jest.mock('../../src/middleware/auth', () => ({
     supabase: {
         from: jest.fn(),
     },
 }));
 
-jest.mock('../src/services/redisService', () => ({
+jest.mock('../../src/services/redisService', () => ({
     getCachedInteraction: jest.fn(),
     setCachedInteraction: jest.fn().mockResolvedValue(undefined),
     batchGetCachedInteractions: jest.fn(),
 }));
 
-jest.mock('../src/middleware/logger', () => ({
+jest.mock('../../src/middleware/logger', () => ({
     logger: {
         info: jest.fn(),
         warn: jest.fn(),
@@ -35,9 +35,9 @@ jest.mock('opossum', () => {
     });
 });
 
-const { detectInteractions, SEVERITY_RANK } = require('../src/services/interactionEngine');
-const { supabase } = require('../src/middleware/auth');
-const { batchGetCachedInteractions, setCachedInteraction } = require('../src/services/redisService');
+const { detectInteractions, SEVERITY_RANK } = require('../../src/services/interactionEngine');
+const { supabase } = require('../../src/middleware/auth');
+const { batchGetCachedInteractions, setCachedInteraction } = require('../../src/services/redisService');
 
 describe('Interaction Detection Engine', () => {
     beforeEach(() => {
