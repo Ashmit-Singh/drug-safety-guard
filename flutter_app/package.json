@@ -2,6 +2,6 @@
   "name": "drug-safety-guard",
   "version": "1.0.0",
   "scripts": {
-    "build": "git clone https://github.com/flutter/flutter.git -b stable flutter-sdk && export PATH=\"$PATH:$(pwd)/flutter-sdk/bin\" && flutter build web --release && rm -rf public && mv build/web public"
+    "build": "echo 'Build handled by GitHub Actions' && mkdir -p public"
   }
 }

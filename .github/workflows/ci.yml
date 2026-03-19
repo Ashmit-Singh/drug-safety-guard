@@ -3,7 +3,7 @@ on:
   pull_request:
     branches: [main, develop]
   push:
-    branches: [main]
+    branches: [main, develop]
 
 jobs:
   backend-lint-test:
@@ -83,3 +83,33 @@ jobs:
         run: |
           ls -la database/migrations/
           echo "Found $(ls database/migrations/*.sql | wc -l) migration files"
+
+  deploy-firebase:
+    name: Deploy to Firebase Hosting
+    needs: [flutter-analyze-test]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to Firebase
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only hosting
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          FIREBASE_CLI_EXPERIMENTS: webframeworks
+
+  deploy-staging-firebase:
+    name: Deploy Staging to Firebase Hosting
+    needs: [flutter-analyze-test]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/develop'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to Firebase Staging Channel
+        uses: w9jds/firebase-action@master
+        with:
+          args: hosting:channel:deploy staging
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          FIREBASE_CLI_EXPERIMENTS: webframeworks
