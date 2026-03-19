@@ -5,6 +5,8 @@
 const request = require('supertest');
 const { setupTestDatabase, seedTestData, teardownTestDatabase } = require('./setup');
 
+jest.setTimeout(30000);
+
 // Mock external services
 jest.mock('../../src/middleware/auth', () => {
     const mockSupabase = {

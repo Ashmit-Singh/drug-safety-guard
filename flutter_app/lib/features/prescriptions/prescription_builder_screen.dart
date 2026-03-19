@@ -47,7 +47,7 @@ class _PrescriptionBuilderScreenState extends ConsumerState<PrescriptionBuilderS
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppStrings.newPrescription),
+        title: const Text(AppStrings.newPrescription),
         actions: [
           if (builderState.selectedDrugs.isNotEmpty)
             FilledButton.icon(

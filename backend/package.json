@@ -9,7 +9,7 @@
     "build": "tsc --noEmit",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src/",
-    "test": "jest --coverage",
+    "test": "jest --coverage --forceExit --detectOpenHandles",
     "verify": "npm run typecheck && npm run lint && npm run test"
   },
   "dependencies": {

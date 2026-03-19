@@ -40,7 +40,7 @@ class StatCard extends StatelessWidget {
                   ),
                   child: Icon(icon, color: color, size: 24),
                 ),
-                Icon(Icons.trending_up, color: AppColors.textLight, size: 16),
+                const Icon(Icons.trending_up, color: AppColors.textLight, size: 16),
               ],
             ),
             const SizedBox(height: 16),

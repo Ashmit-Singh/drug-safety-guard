@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/foundation.dart';
 
 class ApiService {
   static final ApiService _instance = ApiService._internal();
@@ -59,13 +60,13 @@ class ApiService {
     try {
       return await request();
     } on DioException catch (e) {
-      print('[ApiService] DioException: ${e.type} - ${e.message}');
+      debugPrint('[ApiService] DioException: ${e.type} - ${e.message}');
       if (e.response != null) {
-        print('[ApiService] Status: ${e.response?.statusCode} Body: ${e.response?.data}');
+        debugPrint('[ApiService] Status: ${e.response?.statusCode} Body: ${e.response?.data}');
       }
       rethrow;
     } catch (e) {
-      print('[ApiService] Error: $e');
+      debugPrint('[ApiService] Error: $e');
       rethrow;
     }
   }

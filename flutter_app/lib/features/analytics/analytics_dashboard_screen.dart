@@ -175,8 +175,8 @@ class AnalyticsDashboardScreen extends ConsumerWidget {
     return BarChart(BarChartData(
       gridData: FlGridData(show: true, drawVerticalLine: false),
       titlesData: FlTitlesData(
-        leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 32)),
-        bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 32)),
+        bottomTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
         topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
         rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
       ),
@@ -244,7 +244,7 @@ class AnalyticsDashboardScreen extends ConsumerWidget {
     return LineChart(LineChartData(
       gridData: FlGridData(show: true, drawVerticalLine: false),
       titlesData: FlTitlesData(
-        leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 32)),
+        leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 32)),
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,

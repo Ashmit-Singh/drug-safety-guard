@@ -66,18 +66,18 @@ class GlassCard extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Colors.white.withOpacity(opacity),
-                Colors.white.withOpacity(opacity * 0.5),
+                Colors.white.withValues(alpha: opacity),
+                Colors.white.withValues(alpha: opacity * 0.5),
               ],
             ),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: Colors.white.withOpacity(0.15),
+              color: Colors.white.withValues(alpha: 0.15),
               width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.2),
+                color: Colors.black.withValues(alpha: 0.2),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
@@ -159,8 +159,8 @@ class _MetricCardState extends State<MetricCard> with SingleTickerProviderStateM
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: widget.trend == 'up'
-                        ? AppColors.success.withOpacity(0.2)
-                        : AppColors.danger.withOpacity(0.2),
+                        ? AppColors.success.withValues(alpha: 0.2)
+                        : AppColors.danger.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -300,11 +300,11 @@ class _SeverityIndicatorState extends State<SeverityIndicator>
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.15),
+              color: color.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: color.withOpacity(0.4)),
+              border: Border.all(color: color.withValues(alpha: 0.4)),
               boxShadow: _shouldPulse()
-                  ? [BoxShadow(color: color.withOpacity(0.3), blurRadius: 8, spreadRadius: 1)]
+                  ? [BoxShadow(color: color.withValues(alpha: 0.3), blurRadius: 8, spreadRadius: 1)]
                   : null,
             ),
             child: Row(
@@ -463,7 +463,7 @@ class GradientHeader extends StatelessWidget {
               )),
               const SizedBox(height: 4),
               Text(subtitle, style: TextStyle(
-                fontSize: 14, color: Colors.white.withOpacity(0.7),
+                fontSize: 14, color: Colors.white.withValues(alpha: 0.7),
                 fontWeight: FontWeight.w400,
               )),
             ],
